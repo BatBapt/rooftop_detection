@@ -10,7 +10,17 @@ from torchvision.transforms.v2 import functional as F
 import random
 
 class CustomDataset(Dataset):
+    """
+    Custom dataset to load the data
+    """
     def __init__(self, subset, mode="masks", mean_pts=7, transforms=None):
+        """
+        Constructor
+        :args: subset, str: train, test or val
+        :args: mode, str: masks or polygones (never really tried but seems to work)
+        :args: mean_pts, int: mean number of point for each polygone to acces the data (see data_preprocessing.py file). Only used with polygone's mode
+        :args: transforms: transformation to apply for image and mask
+        """
         self.subset = subset
         self.mode = mode
         self.mean_pts = mean_pts
@@ -129,19 +139,6 @@ class CustomDataset(Dataset):
             img, target = self.transforms(img, target)
 
         return img, target
-
-class JointTransform:
-    def __init__(self, resize=(256, 256)):
-        self.resize = resize
-    def __call__(self, image, mask):
-        image = F.resize(image, self.resize, interpolation=F.InterpolationMode.BILINEAR)
-        mask = F.resize(mask.unsqueeze(0), self.resize, interpolation=F.InterpolationMode.NEAREST).squeeze(0)
-
-        if random.random() > 0.5:
-            image = F.hflip(image)
-            mask = F.hflip(mask)
-
-        return image, mask
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt

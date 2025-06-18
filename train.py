@@ -15,7 +15,12 @@ import configuration as cfg
 import data_preprocessing as my_data_processing
 
 
-def get_transform(train):
+def get_transform(train=True):
+    """
+    Get the transformations to apply to the image and mask
+    :args: train: bool, if true then apply only transformations like RandomHorizontalFlip (or more)
+    return torchvision format transformations
+    """
     transforms = []
     if train:
         transforms.append(T.RandomHorizontalFlip(0.5))
@@ -25,6 +30,9 @@ def get_transform(train):
 
 
 def run_config(path):
+    """
+    read the config YAML file and return the dictionary
+    """
     with open(path, "r") as file:
         config = yaml.safe_load(file)
 
@@ -32,6 +40,15 @@ def run_config(path):
 
 
 def setup_training(model, config, stage):
+    """
+    Function used to create the fine-tuning process of your training. You can add many stage as you want, but you will
+    need also declared them in the YAML file !
+    TODO ?: Adapt the function to read the stage directly from a config file ? Is it possible ?
+    :args: model: pytorch model
+    :args: config: dictionary, dictionary of the config file
+    :args: stage: str, current stage of the training process
+    return the configuration, but need to fine a better way
+    """
     config_stage = config[stage]
 
     if stage == "stage1":  # works with most all backbones
@@ -64,11 +81,13 @@ def setup_training(model, config, stage):
 
     return config_stage
 
-
 writer = SummaryWriter(log_dir='runs/rooftop')
 
-
 def train_one_epoch(model, data_loader, device, optimizer, epoch):
+    """
+    Train your model for 1 epoch (based on the torchvision utility code:
+    https://raw.githubusercontent.com/pytorch/vision/main/references/detection/engine.py
+    """
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value:.6f}"))
@@ -109,6 +128,10 @@ def train_one_epoch(model, data_loader, device, optimizer, epoch):
 
 
 def evaluate(model, data_loader, device, epoch):
+    """
+    Evaluate your model after previous function (based on the torchvision utility code:
+    https://raw.githubusercontent.com/pytorch/vision/main/references/detection/engine.py
+    """
     model.eval()
     metric = MeanAveragePrecision()
     header = "Validation:"
@@ -157,10 +180,12 @@ def evaluate(model, data_loader, device, epoch):
 
 
 def progressive_training(model, train_loader, val_loader, device, save_dir):
-    """Lance l'entraînement progressif complet"""
+    """
+    Run the progessive training. Progressive because we use differents fine-tuning process (combinaition of frozen and unfrozen layers)
+    """
 
     print("=" * 60)
-    print("🎯 ENTRAÎNEMENT PROGRESSIF")
+    print("ENTRAÎNEMENT PROGRESSIF")
     print("=" * 60)
 
     best_map = -float('inf')  # Training loop
@@ -228,6 +253,9 @@ def progressive_training(model, train_loader, val_loader, device, save_dir):
 
 
 def compute_iou(preds, targets, num_classes=2):
+    """
+    Compute the Intersect Over Union metrics with the pred mask and the real one
+    """
     preds = torch.argmax(preds, dim=1)
     ious = []
     for cls in range(num_classes):
@@ -243,8 +271,11 @@ def compute_iou(preds, targets, num_classes=2):
 
 
 def alternative_training(model, train_loader, val_loader, device, save_dir):
+    """
+    Alternative training (only used for DeepLabV3 model)
+    """
     print("=" * 60)
-    print("🎯 ENTRAÎNEMENT PROGRESSIF")
+    print("ENTRAÎNEMENT PROGRESSIF")
     print("=" * 60)
 
     config = run_config("config.yaml")

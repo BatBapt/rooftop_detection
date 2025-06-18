@@ -9,6 +9,12 @@ import configuration as cfg
 
 
 def load_labels(label_path):
+    """
+    Load the labels from the text file label_path.
+    Each line represents 1 object in the image
+    :args: label_path: str, path to the label file associated with the image
+    return: list of lines after cleaned each information
+    """
     lines = []
     with open(label_path, "r") as f:
         for line in f.readlines():
@@ -19,6 +25,10 @@ def load_labels(label_path):
 
 
 def generate_mask(mode="train"):
+    """
+    Function used to generate masks data from the polygons and save them.
+    :args: mode: str, mode of the generation used for the path
+    """
     mask_folder = os.path.join(cfg.BASE_PATH, mode, "masks")
     if not os.path.exists(mask_folder):
         os.makedirs(mask_folder)
@@ -48,9 +58,9 @@ def generate_mask(mode="train"):
 
             pts = [(int(keypoints[i] * width), int(keypoints[i + 1] * height)) for i in range(0, len(keypoints), 2)]
             if len(pts) >= 3:
-                cv2.fillPoly(mask, [np.array(pts, dtype=np.int32)], 255)
+                cv2.fillPoly(mask, [np.array(pts, dtype=np.int32)], 255)  # binary mask, 0 is background, 255 is an object
             else:
-                print(f"Warning. Got less then 3 points for {base_name}")
+                print(f"Warning. Got less then 3 points for {base_name}") # never happened
         mask_tensor = torch.from_numpy(mask).unsqueeze(0)
         write_png(mask_tensor, output_mask_path)
     print("Fin ", mode)
@@ -58,16 +68,20 @@ def generate_mask(mode="train"):
 
 def show_image_with_mask(image_path, mask_path, alpha=0.5):
     image = read_image(image_path)
-    mask = read_image(mask_path)  # niveau de gris
+    mask = read_image(mask_path)
 
-    plt.imshow(image.permute(1, 2, 0))  # Afficher l'image de fond
-    plt.imshow(mask.permute(1, 2, 0), alpha=alpha)  # Superposer le masque avec une transparence
+    plt.imshow(image.permute(1, 2, 0))
+    plt.imshow(mask.permute(1, 2, 0), alpha=alpha)
     plt.title("Image avec masque")
     plt.axis("off")
     plt.show()
 
 
 def get_mean_pts_per_poly(labels):
+    """
+    Get the mean number of points within a polygone for every object in the training set.
+    return: int, mean number
+    """
     sum_pts = 0
     cpt_poly = 0
     for file in os.listdir(labels):
@@ -84,6 +98,11 @@ def get_mean_pts_per_poly(labels):
 
 
 def normalize_rooftop(mode="train", num_points=7):
+    """
+    Function used to normalize the rooftops data from the polygons using the mean number of points and save them.
+    :args: mode: str, used to automatize the process accros the dataset
+    :args: num_points: int, number of points for each polygone
+    """
     new_labels_path = os.path.join(cfg.BASE_PATH, mode, f"labels_resampled_{num_points}")
     if not os.path.exists(new_labels_path):
         os.makedirs(new_labels_path)

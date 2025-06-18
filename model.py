@@ -7,11 +7,20 @@ torch.hub.set_dir(cfg.MODEL_HUB)
 
 
 def get_model(num_classes, mode="masks"):
+    """
+    Get the model based on the mode.
+    TODO: improve the function to accept any backbone you want ?
+    :args: num_classes: int, number of classes for our prb to adapt the model
+    :args: mode: int, mode to choose which model to use (segmentation model, bounding boxes model, etc)
+    return the model
+    """
     if mode == "deeplab":
+        # Not really well working
         model = torchvision.models.segmentation.deeplabv3_resnet50(weights="DEFAULT")
         model.classifier[4] = nn.Conv2d(256, num_classes, kernel_size=(1, 1), stride=(1, 1))
 
     if mode == "masks":
+        # 'Best one' right now
         model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights="DEFAULT")
         # get number of input features for the classifier
         in_features = model.roi_heads.box_predictor.cls_score.in_features
@@ -28,6 +37,7 @@ def get_model(num_classes, mode="masks"):
             num_classes
         )
     elif mode == "polygones":
+        # Not really tried a lot with that, but working
         model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights="DEFAULT")
 
         in_features = model.roi_heads.box_predictor.cls_score.in_features
