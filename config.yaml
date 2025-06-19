@@ -1,0 +1,17 @@
+backbone:
+  name: "resnet50"
+stage1:
+  title: "STAGE 1: Training heads only + backbone frozen"
+  epochs: 500
+  lr: 0.01
+  step_size: 400
+stage2:
+  title: "STAGE 2: Training first backbone's layer"
+  epochs: 100
+  lr: 0.005
+  step_size: 70
+stage3:
+  title: "STAGE 3: Training everything"
+  epochs: 200
+  lr: 0.005
+  step_size: 150
