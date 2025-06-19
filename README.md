@@ -84,4 +84,4 @@ Here is an outline of the training stages:
   - Learning Rate: 0.005
   - Step Size: 150 
   
-All layers of the model are trained during this stage to fine-tune the entire model.
+  All layers of the model are trained during this stage to fine-tune the entire model.
