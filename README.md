@@ -47,7 +47,7 @@ Before you begin, ensure you have met the following requirements:
 - Matplotlib
 - SciPy
 
-## ↓ Installation
+### ↓ Installation
 
 To install the necessary dependencies, you can use pip:
 
