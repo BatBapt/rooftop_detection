@@ -73,3 +73,6 @@ Happy coding! 🌟
 
 - Mask R-CNN: [arXiv:1703.06870](https://arxiv.org/abs/1703.06870)
 - Faster R-CNN: [arXiv:1506.01497](https://arxiv.org/abs/1506.01497)
+
+
+<small>This file was improved with my Mistral AI Agent</small>
