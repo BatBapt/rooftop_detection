@@ -1,68 +1,75 @@
-# 🚀 Project Title: Image Segmentation with PyTorch
+# Rooftop Detection Project 🚀
 
-## 📝 Description
-This project focuses on image processing and deep learning, specifically tackling tasks such as object detection and image segmentation using PyTorch and torchvision.
+Hey there! This project is all about detecting rooftops using some cool deep learning models like Mask R-CNN and Faster R-CNN. The main goal is to boost detection accuracy and play around with different approaches to see what works best.
+<br>
+Original dataset: https://www.kaggle.com/datasets/ayushbajpai16/rooftop-satellite-imagery-augmented-yolo-format
+## Project Structure 📂
 
-## 🛠️ Project Structure
+Here's a quick rundown of the files in this project:
 
-The project consists of the following main components:
+- `train.py`: This is where the magic happens! It contains the main training loop for the model. 🏋️‍♂️
+- `dataset.py`: This file takes care of loading and preprocessing the dataset. Think of it as the data chef! 📊
+- `utils.py`: This one's got all the handy utility functions that are used all over the project. 🔧
+- `data_preprocessing.py`: Before training, data needs a little makeover, and this file handles all that. ✨
+- `configuration.py`: All the nitty-gritty settings for the path you might need are there. ⚙️
+- `model.py`: This file is home to the model definitions and other related functions. 🤖
+- `config.yaml`: This file has all the important configuration stuff like epochs and learning rate. 📝
 
-- **data_preprocessing.py**: 🖼️ Contains functions for loading and preprocessing image data. Key functions include:
-  - `load_labels`: Loads labels for the dataset.
-  - `generate_mask`: Generates masks for images, likely for segmentation.
-  - `show_image_with_mask`: Displays images with their corresponding masks.
-  - `get_mean_pts_per_poly`: Computes average points per polygon in the dataset.
-  - `normalize_rooftop`: Normalizes images of rooftops.
+## Detailed Description of Files 📜
 
-- **model.py**: 🤖 Defines the architecture and utility functions for the deep learning model. Key functions include:
-  - `get_model`: Initializes and configures the model based on specified parameters.
-  - `check_trainable_params`: Checks the number of trainable parameters in the model.
+### `train.py`
+This file is like the conductor of an orchestra, managing the training loop. It loads the dataset, initializes the model, and runs the training iterations.
 
-- **configuration.py**: ⚙️ Centralizes global settings and configuration parameters, including paths to data and models, and device settings (CPU or GPU).
+### `dataset.py`
+Think of this file as the data butler. It makes sure that the data is nicely prepped and ready for training.
 
-- **train.py**: 🏋️‍♂️ Manages the training process. Key functions include:
-  - `get_transform`: Defines transformations to be applied to the training images.
-  - `train_one_epoch`: Trains the model for one epoch.
-  - `evaluate`: Evaluates the model performance on validation data.
-  - `progressive_training`: Implements a progressive training strategy.
-  - `compute_iou`: Computes the Intersection over Union (IoU) metric.
-  - `load_model`: Loads a pre-trained model.
+### `utils.py`
+This file is packed with all sorts of useful functions that help with tasks like data manipulation, visualization, and logging. It's like the Swiss Army knife of the project.
 
-- **utils.py**: 🛠️ Provides utility functions and classes for logging, distributed training, and more. Key components include:
-  - Utility functions for metric calculation and process synchronization.
-  - Classes like `SmoothedValue` for tracking metrics and `MetricLogger` for logging.
+### `data_preprocessing.py`
+Before training, the data needs to be cleaned up and transformed. This file handles all that preprocessing work.
 
-- **dataset.py**: 📂 Implements a custom PyTorch Dataset class for handling the dataset. It includes standard methods like:
-  - `__init__`: Initializes the dataset.
-  - `__len__`: Returns the number of items in the dataset.
-  - `__getitem__`: Fetches a specific item from the dataset.
+### `configuration.py`
+This file is where all the important settings live. Things like learning rate, batch size, and model hyperparameters are tucked away here.
 
-## 📌 Prerequisites
+### `model.py`
+This file is all about the models. It has the architecture definitions for Mask R-CNN and Faster R-CNN, along with functions for initializing and training these models.
 
-Before you begin, ensure you have met the following requirements:
-- Python 3.x
-- PyTorch and torchvision
-- OpenCV
-- NumPy
-- Matplotlib
-- SciPy
+### `config.yaml`
+Here's where you'll find all the important config details like epochs and learning rate. It's like the recipe book for training the model.
 
-### ↓ Installation
+## Methodology 🧠
 
-To install the necessary dependencies, you can use pip:
+I've been playing around with two main approaches for rooftop detection: segmentation masks and bounding boxes. The models I'm using are Mask R-CNN and Faster R-CNN, and I'm using torchvision to implement them. So far, the models are kinda stuck at around 23% mean Average Precision (mAP). I haven't had much time to test the bounding box approach yet, but I'm excited to see how it performs!
 
-```bash
-pip install opencv-python numpy matplotlib scipy
-```
-Please refere to the pytorch's website to install torch and torchvision: 
-https://pytorch.org/get-started/locally/
+### Mask R-CNN
+Mask R-CNN is like the fancy cousin of Faster R-CNN. It adds a branch for predicting segmentation masks on each Region of Interest (RoI), which runs side by side with the existing branch for classification and bounding box regression. Pretty neat, huh? 🎭
 
-## 🏁 Conclusion
+### Faster R-CNN
+Faster R-CNN is like a detective that uses a Region Proposal Network (RPN) to generate region proposals. These proposals are then classified and refined to get the final detection results. 🔍
 
-Despite achieving a very low loss, the model's performance plateaus at a mean Average Precision (mAP) score of approximately 22%. 💔 Various approaches have been attempted to improve performance, but none have succeeded so far. This remains an area of active reflection and experimentation. 🧠🔍
+## Results 📈
 
-## 🚀 Future Work
+Right now, the models are chugging along with around 23% mAP. There's definitely room for improvement, and I'm planning to do some more experimenting and tuning to boost performance. <br>
+Graphics will come soon 🛠️
 
-There are several TODOs scattered throughout the code that need attention. Future efforts will focus on addressing these open points and refining the model. 🛠️🔧
+## Future Work 🚀
 
-Additionally, there is a plan to develop a flexible architecture for MaskRCNN or FastRCNN that can adapt seamlessly to any backbone used. This would enhance the versatility and applicability of the model across different tasks and datasets. 🌟🛠️
+There's a lot more I want to try out and improve:
+
+1. **Model Architecture**: I'm thinking about playing around with different backbone architectures for the models. Maybe even create a module that can generate models with different backbones. 🏗️
+2. **Data Augmentation**: More data augmentation techniques could really help improve the model's ability to generalize. 🔀
+3. **Hyperparameter Tuning**: I need to do a deep dive into hyperparameter tuning to get the best performance out of the models. 🎛️
+4. **Bounding Box Approach**: I haven't spent much time on the bounding box approach yet, but I'm hoping it might outperform the segmentation mask method. 📦
+5. **Implementation of TODOs**: There are a bunch of TODOs scattered throughout the code that I need to tackle to add more features and improvements. 📝
+
+## Conclusion 🏁
+
+This project is my little playground for experimenting with rooftop detection using deep learning. The results so far are okay, but there's definitely a lot more to explore and improve. If you're interested, feel free to dive in and contribute!
+
+Happy coding! 🌟
+
+## References 📚
+
+- Mask R-CNN: [arXiv:1703.06870](https://arxiv.org/abs/1703.06870)
+- Faster R-CNN: [arXiv:1506.01497](https://arxiv.org/abs/1506.01497)
